@@ -1,0 +1,11 @@
+port = 4000
+coniksserver_addr = "CONIKSSERVER ADDR HERE"
+
+[oauth]
+  redirect_url = "REDIRECT URL HERE"
+  [oauth.google]
+    client_id = "GOOGLE OAUTH CLIENT ID HERE"
+    client_secret = "GOOGLE CLIENT SECRET"
+  [oauth.github]
+    client_id = "GITHUB CLIENT ID HERE"
+    client_secret = "GITHUB CLIENT SECRET"
