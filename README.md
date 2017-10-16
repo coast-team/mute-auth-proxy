@@ -9,7 +9,6 @@ These two features are requirements for MUTE with end-to-end encryption.
 go get github.com/coast-team/mute_auth_proxy
 ```
 
-```
 ## Configuration
 
 Fill in the `config.toml` with the required information (OAUTH client ID, client secret ...)
