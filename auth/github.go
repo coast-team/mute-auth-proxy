@@ -14,9 +14,9 @@ func MakeGithubLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 			RedirectURL:  conf.OauthPrefs.RedirectURL,
 			ClientID:     conf.OauthPrefs.GithubPrefs.ClientID,
 			ClientSecret: conf.OauthPrefs.GithubPrefs.ClientSecret,
-			Scopes:       []string{"user"},
+			Scopes:       []string{""},
 			Endpoint:     github.Endpoint,
 		}
-		HandleProviderLogin(w, r, apiEndpoint.Github, githubOauthConfig)
+		HandleProviderLogin(w, r, "github", githubOauthConfig)
 	}
 }

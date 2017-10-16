@@ -17,6 +17,6 @@ func MakeGoogleLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 			Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile"},
 			Endpoint:     google.Endpoint,
 		}
-		HandleProviderLogin(w, r, apiEndpoint.Google, googleOauthConfig)
+		HandleProviderLogin(w, r, "google", googleOauthConfig)
 	}
 }

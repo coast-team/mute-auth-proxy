@@ -12,28 +12,23 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type endPointList struct {
-	Google string
-	Github string
+var apiEndpoint = map[string]string{
+	"github": "https://api.github.com/user",
+	"google": "https://www.googleapis.com/oauth2/v3/userinfo",
 }
 
-var apiEndpoint = endPointList{
-	Github: "https://api.github.com/user",
-	Google: "https://www.googleapis.com/oauth2/v3/userinfo",
-}
-
-func HandleProviderLogin(w http.ResponseWriter, r *http.Request, apiURL string, conf oauth2.Config) {
+func HandleProviderLogin(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) {
 	helper.SetHeader(w, r)
 	switch r.Method {
 	case "POST":
-		handleProviderCallback(w, r, apiURL, conf)
+		handleProviderCallback(w, r, provider, conf)
 	default:
 		w.WriteHeader(204)
 		return
 	}
 }
 
-func handleProviderCallback(w http.ResponseWriter, r *http.Request, apiURL string, conf oauth2.Config) {
+func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) {
 	type requestData struct {
 		Code string `json:"code"`
 	}
@@ -42,19 +37,13 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, apiURL strin
 	if err != nil {
 		log.Printf("error : %s", err.Error())
 	}
-	log.Printf("Request Data : %v", data)
-
-	url := conf.AuthCodeURL("state", oauth2.AccessTypeOnline)
-	fmt.Printf("Visit the URL for the auth dialog: %v\n", url)
-
 	accessToken, err := conf.Exchange(oauth2.NoContext, data.Code)
 	if err != nil {
 		fmt.Printf("Code exchange failed with '%s'\n", err)
 		return
 	}
-	log.Printf("access_token: %s", accessToken)
 	client := conf.Client(oauth2.NoContext, accessToken)
-	response, err := client.Get(apiURL)
+	response, err := client.Get(apiEndpoint[provider])
 	if err != nil {
 		fmt.Printf("People API request failed '%s'\n", err)
 		return
@@ -65,18 +54,13 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, apiURL strin
 	if err != nil {
 		log.Printf("Err : %s", err.Error())
 	}
+	profile.FixUsername(provider)
 
 	token2 := jwt.New(jwt.SigningMethodHS256)
 	claims := token2.Claims.(jwt.MapClaims)
-
-	if profile.Email == "" {
-		profile.Login = fmt.Sprintf("%s@github", profile.Login)
-		claims["username"] = profile.Login
-	} else {
-		claims["email"] = profile.Email
-		claims["username"] = profile.Email
-	}
-	claims["name"] = profile.Name
+	claims["username"] = profile.Username()
+	claims["name"] = profile.FullName()
+	claims["avatar"] = profile.Avatar()
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(9000 * time.Hour).Unix()
 
