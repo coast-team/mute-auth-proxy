@@ -54,7 +54,7 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 	if err != nil {
 		log.Printf("Err : %s", err.Error())
 	}
-	log.Printf("Profile : %s, %s, %s, %s, %s", provider, profile.UserLogin(), profile.Name, profile.Email, profile.Avatar())
+	log.Println(profile.Details())
 
 	token2 := jwt.New(jwt.SigningMethodHS256)
 	claims := token2.Claims.(jwt.MapClaims)
