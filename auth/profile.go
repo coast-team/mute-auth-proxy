@@ -12,6 +12,13 @@ type Profile struct {
 	Picture   string `json:"picture"`
 }
 
+func (p Profile) UserLogin() string {
+	if p.Login != "" {
+		return p.Login
+	}
+	return p.Email
+}
+
 func (p Profile) Avatar() string {
 	if p.AvatarURL != "" {
 		return p.AvatarURL
