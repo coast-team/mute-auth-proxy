@@ -54,12 +54,13 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 	if err != nil {
 		log.Printf("Err : %s", err.Error())
 	}
-	profile.FixUsername(provider)
 
 	token2 := jwt.New(jwt.SigningMethodHS256)
 	claims := token2.Claims.(jwt.MapClaims)
-	claims["username"] = profile.Username()
-	claims["name"] = profile.FullName()
+	claims["provider"] = provider
+	claims["login"] = profile.Login
+	claims["name"] = profile.Name
+	claims["email"] = profile.Email
 	claims["avatar"] = profile.Avatar()
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(9000 * time.Hour).Unix()
