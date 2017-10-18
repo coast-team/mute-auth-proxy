@@ -15,11 +15,11 @@ type Config struct {
 
 type OauthConfig struct {
 	RedirectURL string        `toml:"redirect_url"`
-	GooglePrefs providerPrefs `toml:"google"`
-	GithubPrefs providerPrefs `toml:"github"`
+	GooglePrefs ProviderPrefs `toml:"google"`
+	GithubPrefs ProviderPrefs `toml:"github"`
 }
 
-type providerPrefs struct {
+type ProviderPrefs struct {
 	ClientID     string `toml:"client_id"`
 	ClientSecret string `toml:"client_secret"`
 }
