@@ -8,6 +8,7 @@ import (
 	"golang.org/x/oauth2/github"
 )
 
+// MakeGithubLoginHandler returns the handler for the Github login route
 func MakeGithubLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		githubOauthConfig := oauth2.Config{

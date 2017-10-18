@@ -10,6 +10,7 @@ import (
 	"github.com/coast-team/mute-auth-proxy/helper"
 )
 
+// MakeConiksProxyHandler is the handler for the route that proxies a Coniks request
 func MakeConiksProxyHandler(conf *config.Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		helper.SetHeader(w, r)

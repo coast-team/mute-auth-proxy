@@ -8,6 +8,7 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
+// MakeGoogleLoginHandler returns the handler for the Google login route
 func MakeGoogleLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		googleOauthConfig := oauth2.Config{

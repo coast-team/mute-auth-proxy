@@ -17,6 +17,8 @@ var apiEndpoint = map[string]string{
 	"google": "https://www.googleapis.com/oauth2/v3/userinfo",
 }
 
+// HandleProviderLogin is the generic handler for either Google and Github login route.
+// It needs a oauth2.Config parameter
 func HandleProviderLogin(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) {
 	helper.SetHeader(w, r)
 	switch r.Method {

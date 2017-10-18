@@ -9,6 +9,8 @@ import (
 	"github.com/dgrijalva/jwt-go/request"
 )
 
+// ExtractJWT parses the http.Request and extract the JWT from it.
+// It also check that the token signature is correct.
 func ExtractJWT(r *http.Request) (*jwt.Token, error) {
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor, jwtKeyFunc)
 	return token, err
@@ -23,6 +25,7 @@ func jwtKeyFunc(token *jwt.Token) (interface{}, error) {
 	return Secret, nil
 }
 
+// IsJWTValid checks that the token is a well formed and not expired JWT
 func IsJWTValid(token *jwt.Token, tokenError error) error {
 	var msg string
 	if token.Valid {
