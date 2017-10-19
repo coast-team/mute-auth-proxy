@@ -11,10 +11,21 @@ go get github.com/coast-team/mute_auth_proxy
 
 ## Configuration
 
+Generate an config file template :
+```
+mute-auth-proxy init
+```
+
 Fill in the `config.toml` with the required information (OAUTH client ID, client secret ...)
 
 ## Launch it
 
 ```
-mute-auth-proxy
+mute-auth-proxy run
+```
+
+## Help ?
+
+```
+mute-auth-proxy help
 ```
