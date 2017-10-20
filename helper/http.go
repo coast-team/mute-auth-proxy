@@ -25,10 +25,11 @@ import (
 	"strings"
 )
 
-var allowedOrigins = []string{"127.0.0.1", "localhost", "https://coedit.re", "https://coedit.re:8080"}
+var allowedOrigins = []string{"127.0.0.1", "localhost", "www.coedit.re"}
 
 // IsOriginAllowed returns True if the current Origin is one of the allowed one
 func IsOriginAllowed(origin string) bool {
+	log.Printf(origin)
 	allowedOriginsJoined := strings.Join(allowedOrigins, "|")
 	var pattern = regexp.MustCompile(fmt.Sprintf(`(https?:\/\/)(%s)(:)([0-9]+)`, allowedOriginsJoined))
 
