@@ -6,7 +6,8 @@ These two features are requirements for MUTE with end-to-end encryption.
 ## Cloning and installing
 
 ```sh
-go get github.com/coast-team/mute_auth_proxy
+sudo apt install golang-go
+go get github.com/coast-team/mute-auth-proxy
 ```
 
 ## Configuration
