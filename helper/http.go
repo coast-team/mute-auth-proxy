@@ -25,7 +25,7 @@ import (
 	"strings"
 )
 
-var allowedOrigins = []string{"127.0.0.1", "localhost", "www.coedit.re"}
+var allowedOrigins = []string{"127.0.0.1", "localhost", "dev.coedit.re", "coedit.re"}
 
 // IsOriginAllowed returns True if the current Origin is one of the allowed one
 func IsOriginAllowed(origin string) bool {
