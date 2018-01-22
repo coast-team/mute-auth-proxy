@@ -49,14 +49,24 @@ func HandleProviderLogin(w http.ResponseWriter, r *http.Request, provider string
 
 func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) {
 	type requestData struct {
-		Code string `json:"code"`
+		AuthorizationData struct {
+			ClientID    string `json:"client_id"`
+			RedirectURI string `json:"redirect_uri"`
+		} `json:"authorizationData"`
+		OAuthData struct {
+			Code string `json:"code"`
+		} `json:"oauthData"`
 	}
+
 	var data requestData
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
 		log.Printf("error : %s", err.Error())
 	}
-	accessToken, err := conf.Exchange(oauth2.NoContext, data.Code)
+	conf.ClientID = data.AuthorizationData.ClientID
+	conf.RedirectURL = data.AuthorizationData.RedirectURI
+
+	accessToken, err := conf.Exchange(oauth2.NoContext, data.OAuthData.Code)
 	if err != nil {
 		fmt.Printf("Code exchange failed with '%s'\n", err)
 		return
