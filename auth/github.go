@@ -18,6 +18,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/coast-team/mute-auth-proxy/config"
@@ -32,6 +33,9 @@ func MakeGithubLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 			ClientSecret: conf.OauthPrefs.GithubPrefs.ClientSecret,
 			Endpoint:     github.Endpoint,
 		}
-		HandleProviderLogin(w, r, "github", githubOauthConfig)
+		err := HandleProviderLogin(w, r, "github", githubOauthConfig)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }

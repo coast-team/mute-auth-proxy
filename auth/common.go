@@ -36,18 +36,18 @@ var apiEndpoint = map[string]string{
 
 // HandleProviderLogin is the generic handler for either Google and Github login route.
 // It needs a oauth2.Config parameter
-func HandleProviderLogin(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) {
+func HandleProviderLogin(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) error {
 	helper.SetHeader(w, r)
 	switch r.Method {
 	case "POST":
-		handleProviderCallback(w, r, provider, conf)
+		return handleProviderCallback(w, r, provider, conf)
 	default:
 		w.WriteHeader(204)
-		return
+		return nil
 	}
 }
 
-func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) {
+func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) error {
 	type requestData struct {
 		AuthorizationData struct {
 			ClientID    string `json:"client_id"`
@@ -61,27 +61,29 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 	var data requestData
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		log.Printf("error : %s", err.Error())
+		w.Write([]byte("Couldn't decode request's body."))
+		return fmt.Errorf("Couldn't decode request's body.\nError was: %s", err)
 	}
 	conf.ClientID = data.AuthorizationData.ClientID
 	conf.RedirectURL = data.AuthorizationData.RedirectURI
 
 	accessToken, err := conf.Exchange(oauth2.NoContext, data.OAuthData.Code)
 	if err != nil {
-		fmt.Printf("Code exchange failed with '%s'\n", err)
-		return
+		w.Write([]byte("Code exchange failed."))
+		return fmt.Errorf("Code exchange failed.\nError was: %s", err)
 	}
 	client := conf.Client(oauth2.NoContext, accessToken)
 	response, err := client.Get(apiEndpoint[provider])
 	if err != nil {
-		fmt.Printf("People API request failed '%s'\n", err)
-		return
+		w.Write([]byte("Server internal error."))
+		return fmt.Errorf("People API request failed.\nError was: %s", err)
 	}
 	defer response.Body.Close()
 	var profile Profile
 	err = json.NewDecoder(response.Body).Decode(&profile)
 	if err != nil {
-		log.Printf("Err : %s", err.Error())
+		w.Write([]byte("Server internal error."))
+		return fmt.Errorf("Couldn't decode %s's response.\nError was: %s", provider, err)
 	}
 	log.Println(profile.Details())
 
@@ -97,10 +99,12 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 
 	tokenString, err := token2.SignedString(helper.Secret)
 	if err != nil {
-		log.Printf("failed to generate a JWT token, error was: %v", err)
+		w.Write([]byte("Server internal error."))
+		return fmt.Errorf("Failed to generate a JWT token.\nError was: %s", err)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jwt := Token{AccessToken: tokenString}
 	json.NewEncoder(w).Encode(jwt)
+	return nil
 }

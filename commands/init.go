@@ -84,9 +84,9 @@ func generateConfigFile(dest string) {
 	var confBuf bytes.Buffer
 	enc := toml.NewEncoder(&confBuf)
 	if err := enc.Encode(conf); err != nil {
-		log.Fatalf("Coulnd't encode config. %s", err.Error())
+		log.Fatalf("Coulnd't encode config.\nError was: %s", err)
 	}
 	if err := helper.WriteFile(file, confBuf.Bytes(), 0644); err != nil {
-		log.Fatalf("Coulnd't write config: %s", err.Error())
+		log.Fatalf("Coulnd't write config.\nError was:%s", err)
 	}
 }

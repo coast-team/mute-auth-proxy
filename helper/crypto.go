@@ -17,7 +17,10 @@
 
 package helper
 
-import "crypto/rand"
+import (
+	"crypto/rand"
+	"log"
+)
 
 // Secret is the JWT signing key
 var Secret = generateRandomBytes(30)
@@ -28,7 +31,7 @@ func generateRandomBytes(n int) []byte {
 	_, err := rand.Read(b)
 	// Note that err == nil only if we read len(b) bytes.
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	return b
 }

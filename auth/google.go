@@ -18,6 +18,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/coast-team/mute-auth-proxy/config"
@@ -32,6 +33,9 @@ func MakeGoogleLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 			ClientSecret: conf.OauthPrefs.GooglePrefs.ClientSecret,
 			Endpoint:     google.Endpoint,
 		}
-		HandleProviderLogin(w, r, "google", googleOauthConfig)
+		err := HandleProviderLogin(w, r, "google", googleOauthConfig)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }

@@ -29,7 +29,6 @@ var allowedOrigins = []string{"127.0.0.1", "localhost", "dev.coedit.re", "coedit
 
 // IsOriginAllowed returns True if the current Origin is one of the allowed one
 func IsOriginAllowed(origin string) bool {
-	log.Printf(origin)
 	allowedOriginsJoined := strings.Join(allowedOrigins, "|")
 	var pattern = regexp.MustCompile(fmt.Sprintf(`(https?:\/\/)(%s)(:[0-9]+)?`, allowedOriginsJoined))
 
@@ -38,12 +37,14 @@ func IsOriginAllowed(origin string) bool {
 
 // SetHeader adds to the header the 'good' value for CORS
 func SetHeader(w http.ResponseWriter, r *http.Request) {
-	if IsOriginAllowed(r.Header.Get("Origin")) {
-		log.Printf("Origin %s allowed\n", r.Header.Get("Origin"))
-		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin")) // IMPORTANT
+	origin := r.Header.Get("Origin")
+	if IsOriginAllowed(origin) {
+		w.Header().Set("Access-Control-Allow-Origin", origin) // IMPORTANT
 		w.Header().Set("Vary", "Origin, Access-Control-Request-Headers")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "content-type, authorization") // IMPORTANT !
 		w.Header().Set("Connection", "keep-alive")
+	} else {
+		log.Printf("CORS: origin '%s' not allowed!", origin)
 	}
 }

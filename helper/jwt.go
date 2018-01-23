@@ -50,7 +50,7 @@ func IsJWTValid(token *jwt.Token, tokenError error) error {
 		return nil
 	} else if ve, ok := tokenError.(*jwt.ValidationError); ok {
 		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-			msg = "That's not even a jwt"
+			msg = "That's not even a JWT"
 		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
 			msg = "Token is either expired or not active yet"
 		} else {
@@ -59,5 +59,5 @@ func IsJWTValid(token *jwt.Token, tokenError error) error {
 	} else {
 		msg = "Couldn't handle this token"
 	}
-	return fmt.Errorf(fmt.Sprintf("Error with JWT - %s\nError: %s", msg, tokenError))
+	return fmt.Errorf("Error with JWT - %s\nError was: %s", msg, tokenError)
 }

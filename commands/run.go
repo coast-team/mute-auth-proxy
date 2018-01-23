@@ -48,9 +48,9 @@ func run(cmd *cobra.Command) {
 	confFilename := cmd.Flag("config").Value.String()
 	conf, err := config.LoadConfig(confFilename)
 	if err != nil {
-		log.Fatalf("LoadConfig: %s", err)
+		log.Fatalf("Couldn't load the config.\nError was: %s", err)
 	}
-	log.Printf("Conf: %+v", conf)
+	log.Println(conf)
 	http.HandleFunc("/auth/google", auth.MakeGoogleLoginHandler(conf))
 	http.HandleFunc("/auth/github", auth.MakeGithubLoginHandler(conf))
 	http.HandleFunc("/coniks", api.MakeConiksProxyHandler(conf))

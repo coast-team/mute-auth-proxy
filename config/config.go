@@ -30,15 +30,27 @@ type Config struct {
 	OauthPrefs       OauthConfig `toml:"oauth"`
 }
 
+func (conf Config) String() string {
+	return fmt.Sprintf("Config:\n  Port: %d\n  Coniks server addr: %s\n  %s", conf.Port, conf.ConiksServerAddr, conf.OauthPrefs)
+}
+
 type OauthConfig struct {
 	RedirectURL string        `toml:"redirect_url"`
 	GooglePrefs ProviderPrefs `toml:"google"`
 	GithubPrefs ProviderPrefs `toml:"github"`
 }
 
+func (conf OauthConfig) String() string {
+	return fmt.Sprintf("Oauth Config:\n    Redirect URL: %s\n    Google Preferences:\n      %s\n    Github Preferences:\n      %s", conf.RedirectURL, conf.GooglePrefs, conf.GithubPrefs)
+}
+
 type ProviderPrefs struct {
 	ClientID     string `toml:"client_id"`
 	ClientSecret string `toml:"client_secret"`
+}
+
+func (conf ProviderPrefs) String() string {
+	return fmt.Sprintf("Client ID: %s\n      Client Secret: %s", conf.ClientID, conf.ClientSecret)
 }
 
 // LoadConfig loads and parses the information from the config file and fill the Config struct

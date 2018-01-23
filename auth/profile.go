@@ -36,7 +36,7 @@ type Profile struct {
 // Details returns a string containing all the usefull information about an user.
 // Used for logging
 func (p Profile) Details() string {
-	return fmt.Sprintf("Profile:\n\tlogin: %s\n\temail: %s\n\tfullname: %s\n\tavatar: %s", p.UserLogin(), p.Email, p.Name, p.Avatar())
+	return fmt.Sprintf("Profile:\n  login: %s\n  email: %s\n  fullname: %s\n  avatar: %s", p.UserLogin(), p.Email, p.Name, p.Avatar())
 }
 
 // UserLogin returns the login of the user if provided. Otherwise it return the email of the user.
