@@ -20,8 +20,10 @@ package auth
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/coast-team/mute-auth-proxy/config"
+	jwt "github.com/dgrijalva/jwt-go"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -38,4 +40,15 @@ func MakeGoogleLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 			log.Println(err)
 		}
 	}
+}
+
+func setGoogleClaims(token *jwt.Token, profile map[string]interface{}) {
+	claims := token.Claims.(jwt.MapClaims)
+	claims["provider"] = "google"
+	claims["login"] = profile["email"]
+	claims["name"] = profile["name"]
+	claims["email"] = profile["email"]
+	claims["avatar"] = profile["picture"]
+	claims["iat"] = time.Now().Unix()
+	claims["exp"] = time.Now().Add(9000 * time.Hour).Unix()
 }
