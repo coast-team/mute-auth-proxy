@@ -40,12 +40,9 @@ port = 4000
 coniksserver_addr = "https://localhost:8400"
 
 [oauth]
-  redirect_url = "Web Client URL"
   [oauth.google]
-    client_id = "GOOGLE CLIENT ID"
     client_secret = "GOOGLE CLIENT ID"
   [oauth.github]
-    client_id = "GITHUB CLIENT ID"
     client_secret = "GITHUB CLIENT ID"
 
 Please fill this config file with the appropriate information.
@@ -69,13 +66,10 @@ func generateConfigFile(dest string) {
 		Port:             4000,
 		ConiksServerAddr: "http://localhost:8400",
 		OauthPrefs: config.OauthConfig{
-			RedirectURL: "Web Client URL",
 			GooglePrefs: config.ProviderPrefs{
-				ClientID:     "GOOGLE CLIENT ID",
 				ClientSecret: "GOOGLE CLIENT SECRET",
 			},
 			GithubPrefs: config.ProviderPrefs{
-				ClientID:     "GITHUB CLIENT ID",
 				ClientSecret: "GITHUB CLIENT SECRET",
 			},
 		},
