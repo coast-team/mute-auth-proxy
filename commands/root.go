@@ -27,7 +27,7 @@ import (
 var RootCmd = &cobra.Command{
 	Use:   "mute-auth-proxy",
 	Short: "Mute Authentication Proxy in Go.",
-	Long:  `Mute Authentication Proxy in Go. It handles OAUTH login and proxies the ConiksClient request to the ConiksServer.`,
+	Long:  `Mute Authentication Proxy in Go. It handles OAUTH login and proxies the ConiksClient requests to the ConiksServer.`,
 }
 
 // Execute adds all child commands to the root command

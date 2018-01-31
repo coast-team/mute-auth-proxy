@@ -33,8 +33,7 @@ import (
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Creates a config file.",
-	Long: `Creates a file config.toml in the current working directory with
-the following content:
+	Long: `Creates a file config.toml in the current working directory with the following content:
 
 port = 4000
 coniksserver_addr = "https://localhost:8400"
@@ -50,14 +49,14 @@ Please fill this config file with the appropriate information.
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := cmd.Flag("dest").Value.String()
 		generateConfigFile(dir)
-		fmt.Println("Please fill in the generated config file.")
+		fmt.Println("Please fill the generated config file.")
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(initCmd)
 	initCmd.Flags().StringP("dest", "d", ".",
-		"Location of the directory where to save the generated config file")
+		"the directory path where to save the generated config file")
 }
 
 func generateConfigFile(dest string) {
@@ -81,6 +80,6 @@ func generateConfigFile(dest string) {
 		log.Fatalf("Coulnd't encode config.\nError was: %s", err)
 	}
 	if err := helper.WriteFile(file, confBuf.Bytes(), 0644); err != nil {
-		log.Fatalf("Coulnd't write config.\nError was:%s", err)
+		log.Fatalf("Coulnd't write config.\nError was: %s", err)
 	}
 }
