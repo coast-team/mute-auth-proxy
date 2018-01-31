@@ -20,6 +20,7 @@ package commands
 import (
 	"fmt"
 	"log"
+	"os"
 	"path"
 
 	"bytes"
@@ -48,19 +49,27 @@ Please fill this config file with the appropriate information.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := cmd.Flag("dest").Value.String()
-		generateConfigFile(dir)
-		fmt.Println("Please fill the generated config file.")
+		written := generateConfigFile(dir)
+		if written {
+			fmt.Println("Please fill the generated config file.")
+		}
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(initCmd)
-	initCmd.Flags().StringP("dest", "d", ".",
-		"the directory path where to save the generated config file")
+	initCmd.Flags().StringP("dest", "d", "./",
+		"The path where to save the generated config file. (If the path denotes a directory then the config file path will be path/config.toml)")
 }
 
-func generateConfigFile(dest string) {
-	file := path.Join(dest, "config.toml")
+func generateConfigFile(filepath string) bool {
+	fileinfo, err := os.Stat(filepath)
+	if err != nil && !os.IsNotExist(err) {
+		log.Fatalf("Couldn't get the file description of %s.\nError was: %s", filepath, err)
+	}
+	if !os.IsNotExist(err) && fileinfo.Mode().IsDir() {
+		filepath = path.Join(filepath, "config.toml")
+	}
 	var conf = config.Config{
 		Port:             4000,
 		ConiksServerAddr: "http://localhost:8400",
@@ -76,10 +85,12 @@ func generateConfigFile(dest string) {
 
 	var confBuf bytes.Buffer
 	enc := toml.NewEncoder(&confBuf)
-	if err := enc.Encode(conf); err != nil {
-		log.Fatalf("Coulnd't encode config.\nError was: %s", err)
+	if err = enc.Encode(conf); err != nil {
+		log.Fatalf("Couldn't encode config.\nError was: %s", err)
 	}
-	if err := helper.WriteFile(file, confBuf.Bytes(), 0644); err != nil {
-		log.Fatalf("Coulnd't write config.\nError was: %s", err)
+	written, err := helper.WriteFile(filepath, confBuf.Bytes(), 0644)
+	if err != nil {
+		log.Fatalf("Couldn't write config file.\nError was: %s\nMaybe all the directories in the path do not exist ?", err)
 	}
+	return written
 }
