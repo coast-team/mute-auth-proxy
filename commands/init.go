@@ -40,9 +40,9 @@ coniksserver_addr = "https://localhost:8400"
 
 [oauth]
   [oauth.google]
-    client_secret = "GOOGLE CLIENT ID"
+    client_secret = "GOOGLE CLIENT SECRET"
   [oauth.github]
-    client_secret = "GITHUB CLIENT ID"
+    client_secret = "GITHUB CLIENT SECRET"
 
 Please fill this config file with the appropriate information.
 `,
