@@ -1,4 +1,4 @@
-// Copyright 2017 Jean-Philippe Eisenbarth
+// Copyright 2017-2018 Jean-Philippe Eisenbarth
 //
 // This file is part of Mute Authentication Proxy.
 //
