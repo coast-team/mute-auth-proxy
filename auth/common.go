@@ -20,6 +20,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -64,6 +65,9 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 	var data requestData
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
+		if err == io.EOF {
+			return fmt.Errorf("Couldn't decode request's body, maybe CORS issue ?\nError was: %s", err)
+		}
 		w.Write([]byte("Couldn't decode request's body."))
 		return fmt.Errorf("Couldn't decode request's body.\nError was: %s", err)
 	}
