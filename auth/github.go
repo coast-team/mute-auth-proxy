@@ -35,7 +35,7 @@ func MakeGithubLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 			ClientSecret: conf.OauthPrefs.GithubPrefs.ClientSecret,
 			Endpoint:     github.Endpoint,
 		}
-		err := HandleProviderLogin(w, r, "github", githubOauthConfig)
+		err := handleProviderCallback(w, r, "github", githubOauthConfig)
 		if err != nil {
 			log.Println(err)
 		}

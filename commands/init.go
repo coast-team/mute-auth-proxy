@@ -38,6 +38,7 @@ var initCmd = &cobra.Command{
 
 port = 4000
 coniksserver_addr = "https://localhost:8400"
+allowed_origins = ["http://localhost:4200"]
 
 [oauth]
   [oauth.google]
@@ -73,6 +74,7 @@ func generateConfigFile(filepath string) bool {
 	var conf = config.Config{
 		Port:             4000,
 		ConiksServerAddr: "http://localhost:8400",
+		AllowedOrigins:   []string{"http://localhost:4200"},
 		OauthPrefs: config.OauthConfig{
 			GooglePrefs: config.ProviderPrefs{
 				ClientSecret: "GOOGLE CLIENT SECRET",

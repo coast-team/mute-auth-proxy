@@ -48,19 +48,6 @@ type Token struct {
 	AccessToken string `json:"access_token"`
 }
 
-// HandleProviderLogin is the generic handler for either Google and Github login route.
-// It needs a oauth2.Config parameter
-func HandleProviderLogin(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) error {
-	helper.SetHeader(w, r)
-	switch r.Method {
-	case "POST":
-		return handleProviderCallback(w, r, provider, conf)
-	default:
-		w.WriteHeader(204)
-		return fmt.Errorf("HTTP methods wasn't POST")
-	}
-}
-
 func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider string, conf oauth2.Config) error {
 	var data requestData
 	err := json.NewDecoder(r.Body).Decode(&data)

@@ -35,7 +35,7 @@ func MakeGoogleLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 			ClientSecret: conf.OauthPrefs.GooglePrefs.ClientSecret,
 			Endpoint:     google.Endpoint,
 		}
-		err := HandleProviderLogin(w, r, "google", googleOauthConfig)
+		err := handleProviderCallback(w, r, "google", googleOauthConfig)
 		if err != nil {
 			log.Println(err)
 		}

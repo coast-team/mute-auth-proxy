@@ -25,6 +25,8 @@ import (
 	"github.com/coast-team/mute-auth-proxy/api"
 	"github.com/coast-team/mute-auth-proxy/auth"
 	"github.com/coast-team/mute-auth-proxy/config"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 
@@ -51,10 +53,12 @@ func run(cmd *cobra.Command) {
 		log.Fatalf("Couldn't load the config.\nError was: %s", err)
 	}
 	log.Println(conf)
-	http.HandleFunc("/auth/google", auth.MakeGoogleLoginHandler(conf))
-	http.HandleFunc("/auth/github", auth.MakeGithubLoginHandler(conf))
-	http.HandleFunc("/coniks", api.MakeConiksProxyHandler(conf))
-	err = http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), nil)
+	router := mux.NewRouter()
+	router.HandleFunc("/auth/google", auth.MakeGoogleLoginHandler(conf))
+	router.HandleFunc("/auth/github", auth.MakeGithubLoginHandler(conf))
+	router.HandleFunc("/coniks", api.MakeConiksProxyHandler(conf))
+	handlerFunc := handlers.CORS(handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "OPTIONS"}), handlers.AllowedOrigins(conf.AllowedOrigins))(router)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), handlerFunc)
 	if err != nil {
 		log.Fatalf("ListenAndServe: %s", err)
 	}
