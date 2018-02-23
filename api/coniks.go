@@ -18,12 +18,17 @@
 package api
 
 import (
+	"bytes"
 	"crypto/tls"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/coast-team/mute-auth-proxy/config"
+	"github.com/coast-team/mute-auth-proxy/helper"
 )
 
 // MakeConiksProxyHandler is the handler for the route that proxies a Coniks request
@@ -36,21 +41,42 @@ func MakeConiksProxyHandler(conf *config.Config) func(w http.ResponseWriter, r *
 	}
 }
 
-func handleConiksProxy(w http.ResponseWriter, r *http.Request, conf *config.Config) {
+func handleConiksProxy(w http.ResponseWriter, r *http.Request, conf *config.Config) error {
 	token, err := helper.ExtractJWT(r)
 	if err != nil {
 		err = helper.IsJWTValid(token, err)
-		log.Printf("JWT error: %s", err)
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
+		return fmt.Errorf("Couldn't extract or validate the JWT.\nError was: %s", err)
 	}
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	client := &http.Client{Transport: tr}
-	res, err := client.Post(conf.ConiksServerAddr, "application/json", r.Body)
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatalf("Coniksserver request failed: %s", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return fmt.Errorf("Couldn't read request's body.\nError was: %s", err)
 	}
-	io.Copy(w, res.Body)
+
+	tlsConf := &tls.Config{InsecureSkipVerify: true}
+	u, _ := url.Parse(conf.ConiksServerAddr)
+	conn, err := tls.Dial(u.Scheme, u.Host, tlsConf)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return fmt.Errorf("Couldn't establish connection to ConiksServer.\nError was: %s", err)
+	}
+	defer conn.Close()
+
+	_, err = conn.Write(body)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return fmt.Errorf("Communication to ConiksServer failed. Tried to send:\n%s\nError was: %s", body, err)
+	}
+	conn.CloseWrite() // writes EOF
+
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, conn)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return fmt.Errorf("Couldn't send ConiksServer's response to ConiksClient.\nError was: %s", err)
+	}
+
+	w.Write(buf.Bytes())
+	return nil
 }

@@ -45,7 +45,7 @@ func jwtKeyFunc(token *jwt.Token) (interface{}, error) {
 // IsJWTValid checks that the token is a well formed and not expired JWT
 func IsJWTValid(token *jwt.Token, tokenError error) error {
 	var msg string
-	if token.Valid {
+	if token != nil && token.Valid {
 		log.Println("JWT is Valid")
 		return nil
 	} else if ve, ok := tokenError.(*jwt.ValidationError); ok {
@@ -59,5 +59,5 @@ func IsJWTValid(token *jwt.Token, tokenError error) error {
 	} else {
 		msg = "Couldn't handle this token"
 	}
-	return fmt.Errorf("Error with JWT - %s\nError was: %s", msg, tokenError)
+	return fmt.Errorf("%s: %s", msg, tokenError)
 }
