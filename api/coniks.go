@@ -36,7 +36,7 @@ func MakeConiksProxyHandler(conf *config.Config) func(w http.ResponseWriter, r *
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := handleConiksProxy(w, r, conf)
 		if err != nil {
-			log.Println(err)
+			log.Printf("Coniks proxy err: %s\n", err)
 		}
 	}
 }

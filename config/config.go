@@ -27,12 +27,13 @@ import (
 type Config struct {
 	Port             int
 	ConiksServerAddr string      `toml:"coniksserver_addr"`
+	BotStorageAddr   string      `toml:"botstorage_addr"`
 	AllowedOrigins   []string    `toml:"allowed_origins"`
 	OauthPrefs       OauthConfig `toml:"oauth"`
 }
 
 func (conf Config) String() string {
-	return fmt.Sprintf("Config:\n  Port: %d\n  Coniks server addr: %s\n  Allowed origins: %s\n  %s", conf.Port, conf.ConiksServerAddr, conf.AllowedOrigins, conf.OauthPrefs)
+	return fmt.Sprintf("Config:\n  Port: %d\n  Coniks server addr: %s  BotStorage addr: %s\n  Allowed origins: %s\n  %s", conf.Port, conf.ConiksServerAddr, conf.BotStorageAddr, conf.AllowedOrigins, conf.OauthPrefs)
 }
 
 type OauthConfig struct {

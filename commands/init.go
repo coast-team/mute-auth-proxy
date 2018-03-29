@@ -74,6 +74,7 @@ func generateConfigFile(filepath string) bool {
 	var conf = config.Config{
 		Port:             4000,
 		ConiksServerAddr: "http://localhost:8400",
+		BotStorageAddr:   "http://localhost:4000",
 		AllowedOrigins:   []string{"http://localhost:4200"},
 		OauthPrefs: config.OauthConfig{
 			GooglePrefs: config.ProviderPrefs{

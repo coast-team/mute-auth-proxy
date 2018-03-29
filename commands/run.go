@@ -53,11 +53,13 @@ func run(cmd *cobra.Command) {
 		log.Fatalf("Couldn't load the config.\nError was: %s", err)
 	}
 	log.Println(conf)
+	proxy := api.New("/botstorage", conf.BotStorageAddr)
 	router := mux.NewRouter()
 	router.HandleFunc("/auth/google", auth.MakeGoogleLoginHandler(conf))
 	router.HandleFunc("/auth/github", auth.MakeGithubLoginHandler(conf))
 	router.HandleFunc("/coniks", api.MakeConiksProxyHandler(conf))
-	handlerFunc := handlers.CORS(handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "OPTIONS"}), handlers.AllowedOrigins(conf.AllowedOrigins))(router)
+	router.PathPrefix("/botstorage").HandlerFunc(api.MakeBotStorageProxyHandler(proxy))
+	handlerFunc := handlers.CORS(handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}), handlers.AllowedOrigins(conf.AllowedOrigins))(router)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), handlerFunc)
 	if err != nil {
 		log.Fatalf("ListenAndServe: %s", err)

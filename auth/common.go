@@ -44,6 +44,7 @@ type requestData struct {
 	} `json:"oauthData"`
 }
 
+// Token respresents the structure that contains the String formatted JWT
 type Token struct {
 	AccessToken string `json:"access_token"`
 }
