@@ -5,3 +5,6 @@ bin/
 # HTTPS
 server.crt
 server.key
+
+# JWT signing key
+symmetric_keyfile
