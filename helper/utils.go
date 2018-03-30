@@ -35,3 +35,12 @@ func WriteFile(filepath string, buf []byte, perm os.FileMode) (bool, error) {
 	err := ioutil.WriteFile(filepath, buf, perm)
 	return true, err
 }
+
+// ReadFile reads the file indicated by filepath and return the corresponding array of bytes
+func ReadFile(filepath string) ([]byte, error) {
+	if _, err := os.Stat(filepath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("Failed to load keyfile: %v", err)
+	}
+	b, err := ioutil.ReadFile(filepath)
+	return b, err
+}

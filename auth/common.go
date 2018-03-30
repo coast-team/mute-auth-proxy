@@ -87,7 +87,7 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	setClaims(token, profile, provider)
-	tokenString, err := token.SignedString(helper.Secret)
+	tokenString, err := token.SignedString(helper.GetSecret())
 	if err != nil {
 		w.Write([]byte("Server internal error."))
 		return fmt.Errorf("Failed to generate a JWT token.\nError was: %s", err)

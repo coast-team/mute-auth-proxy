@@ -50,7 +50,12 @@ Please fill this config file with the appropriate information.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := cmd.Flag("dest").Value.String()
-		written := generateConfigFile(dir)
+		keyfilename := cmd.Flag("genkeyfile").Value.String()
+		written := generateSymmetricKeyFile(dir, keyfilename)
+		if written {
+			fmt.Println("Symmetric key saved.")
+		}
+		written = generateConfigFile(dir)
 		if written {
 			fmt.Println("Please fill the generated config file.")
 		}
@@ -61,6 +66,21 @@ func init() {
 	RootCmd.AddCommand(initCmd)
 	initCmd.Flags().StringP("dest", "d", "./",
 		"The path where to save the generated config file. (If the path denotes a directory then the config file path will be path/config.toml)")
+	initCmd.Flags().StringP("genkeyfile", "k", "symmetric_keyfile",
+		"If this flag is specified, it will generate the symmetric key file at the given location. The default location is ./symmetric_keyfile")
+}
+
+// GenSymmetricKeyFile generates a key file with 256 bits symmetric key for HMAC.
+func generateSymmetricKeyFile(dir, filepath string) bool {
+	filepath = path.Join(dir, filepath)
+	k := helper.GenerateRandomBytes()
+
+	written, err := helper.WriteFile(filepath, k, 0600)
+	if err != nil {
+		log.Fatalf("Couldn't write keyfile.\nError was: %s\nMaybe all the directories in the path do not exist ?", err)
+	}
+
+	return written
 }
 
 func generateConfigFile(filepath string) bool {

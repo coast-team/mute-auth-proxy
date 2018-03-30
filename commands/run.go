@@ -25,6 +25,7 @@ import (
 	"github.com/coast-team/mute-auth-proxy/api"
 	"github.com/coast-team/mute-auth-proxy/auth"
 	"github.com/coast-team/mute-auth-proxy/config"
+	"github.com/coast-team/mute-auth-proxy/helper"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -44,10 +45,18 @@ var runCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(runCmd)
 	runCmd.Flags().StringP("config", "c", "config.toml", "The config file to load")
+	runCmd.Flags().StringP("keyfile", "k", "symmetric_keyfile", "The key file to load")
 }
 
 func run(cmd *cobra.Command) {
+	var err error
 	confFilename := cmd.Flag("config").Value.String()
+	keyfilepath := cmd.Flag("keyfile").Value.String()
+	keyData, err := helper.ReadFile(keyfilepath)
+	if err != nil {
+		log.Fatalf("Couldn't load the keyfile.\nError was: %s", err)
+	}
+	helper.SetSecret(keyData)
 	conf, err := config.LoadConfig(confFilename)
 	if err != nil {
 		log.Fatalf("Couldn't load the config.\nError was: %s", err)

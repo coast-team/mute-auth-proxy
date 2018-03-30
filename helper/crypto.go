@@ -22,12 +22,44 @@ import (
 	"log"
 )
 
-// Secret is the JWT signing key
-var Secret = generateRandomBytes(30)
+type secret struct {
+	secret     []byte
+	setCounter int
+}
 
-// generateRandomBytes generated a []byte containing n secure random numbers
-func generateRandomBytes(n int) []byte {
-	b := make([]byte, n)
+var sec = &secret{setCounter: 0}
+
+// GetSecret returns the secret that should be used for signing JWT
+func GetSecret() []byte {
+	if sec.setCounter != 1 {
+		log.Fatal("The secret has not yet being set ...")
+	}
+	return sec.secret
+}
+
+// GenerateSecret sets the secret by generating a new one
+// The secret can only be set once...
+func GenerateSecret() {
+	if sec.setCounter != 0 {
+		log.Println("The secret has already being set ...")
+	} else {
+		sec.secret = GenerateRandomBytes()
+	}
+}
+
+// SetSecret sets the secret given b an array of bytes read from a file for example
+func SetSecret(b []byte) {
+	if sec.setCounter != 0 {
+		log.Println("The secret has already being set ...")
+	} else {
+		sec.secret = b
+		sec.setCounter++
+	}
+}
+
+// GenerateRandomBytes generated a []byte containing n secure random numbers
+func GenerateRandomBytes() []byte {
+	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	// Note that err == nil only if we read len(b) bytes.
 	if err != nil {

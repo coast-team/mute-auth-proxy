@@ -39,7 +39,7 @@ func jwtKeyFunc(token *jwt.Token) (interface{}, error) {
 		return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 	}
 
-	return Secret, nil
+	return GetSecret(), nil
 }
 
 // IsJWTValid checks that the token is a well formed and not expired JWT
