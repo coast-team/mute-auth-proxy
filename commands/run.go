@@ -45,7 +45,7 @@ var runCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(runCmd)
 	runCmd.Flags().StringP("config", "c", "config.toml", "The config file to load")
-	runCmd.Flags().StringP("keyfile", "k", "symmetric_keyfile", "The key file to load")
+	runCmd.Flags().StringP("keyfile", "k", "symmetric_keyfile", "The key file (used for JWT signing) to load")
 }
 
 func run(cmd *cobra.Command) {

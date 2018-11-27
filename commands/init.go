@@ -67,7 +67,7 @@ func init() {
 	initCmd.Flags().StringP("dest", "d", "./",
 		"The path where to save the generated config file. (If the path denotes a directory then the config file path will be path/config.toml)")
 	initCmd.Flags().StringP("genkeyfile", "k", "symmetric_keyfile",
-		"If this flag is specified, it will generate the symmetric key file at the given location. The default location is ./symmetric_keyfile")
+		"If this flag is specified, it will generate the symmetric key file (used for JWT signing) at the given location. The default location is ./symmetric_keyfile")
 }
 
 // GenSymmetricKeyFile generates a key file with 256 bits symmetric key for HMAC.
