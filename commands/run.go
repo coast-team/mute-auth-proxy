@@ -26,6 +26,7 @@ import (
 	"github.com/coast-team/mute-auth-proxy/auth"
 	"github.com/coast-team/mute-auth-proxy/config"
 	"github.com/coast-team/mute-auth-proxy/helper"
+	"github.com/dgraph-io/badger"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -68,6 +69,18 @@ func run(cmd *cobra.Command) {
 	router.HandleFunc("/auth/github", auth.MakeGithubLoginHandler(conf))
 	router.HandleFunc("/coniks", api.MakeConiksProxyHandler(conf))
 	router.PathPrefix("/botstorage").HandlerFunc(api.MakeBotStorageProxyHandler(proxy))
+	opts := badger.DefaultOptions
+	opts.Dir = conf.KeyServerPath
+	opts.ValueDir = conf.KeyServerPath
+	db, err := badger.Open(opts)
+	if err != nil {
+		log.Fatalf("Open Badger DB: %s", err)
+	}
+	defer db.Close()
+	router.HandleFunc("/public-key/{login}", api.MakePublicKeyGETAllHandler(db)).Methods("GET")
+	router.HandleFunc("/public-key/{login}/{device}", api.MakePublicKeyGETHandler(db)).Methods("GET")
+	router.HandleFunc("/public-key", api.MakePublicKeyPOSTHandler(db)).Methods("POST")
+	router.HandleFunc("/public-key/{login}/{device}", api.MakePublicKeyPUTHandler(db)).Methods("PUT")
 	handlerFunc := handlers.CORS(handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}), handlers.AllowedOrigins(conf.AllowedOrigins))(router)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), handlerFunc)
 	if err != nil {

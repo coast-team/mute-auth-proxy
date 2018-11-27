@@ -44,3 +44,12 @@ func ReadFile(filepath string) ([]byte, error) {
 	b, err := ioutil.ReadFile(filepath)
 	return b, err
 }
+
+func StringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
