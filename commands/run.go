@@ -81,7 +81,7 @@ func run(cmd *cobra.Command) {
 	router.HandleFunc("/public-key/{login}/{device}", api.MakePublicKeyGETHandler(db)).Methods("GET")
 	router.HandleFunc("/public-key", api.MakePublicKeyPOSTHandler(db)).Methods("POST")
 	router.HandleFunc("/public-key/{login}/{device}", api.MakePublicKeyPUTHandler(db)).Methods("PUT")
-	handlerFunc := handlers.CORS(handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}), handlers.AllowedOrigins(conf.AllowedOrigins))(router)
+	handlerFunc := handlers.CORS(handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}), handlers.AllowedOrigins(conf.AllowedOrigins))(router)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), handlerFunc)
 	if err != nil {
 		log.Fatalf("ListenAndServe: %s", err)

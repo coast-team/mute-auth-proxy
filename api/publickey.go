@@ -12,18 +12,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// UserAllPK is the structure that contains all the public Keys of an user (one PK per device)
 type UserAllPK struct {
 	Login string
 	AllPK map[string]string
 }
 
+// PublicKey represents a public key in a JSON object
 type PublicKey struct {
 	PK string `json:"pk"`
 }
 
+// UserPublicKey is the structure that contains the public key associate to an user and a device
 type UserPublicKey struct {
 	Login  string `json:"login"`
-	Device string `json:"device"`
+	Device string `json:"deviceID"`
 	PK     string `json:"pk"`
 }
 
