@@ -51,7 +51,7 @@ curl "$baseUrl/public-key/$loginWrong"  -H "authorization: Bearer $1" -i
 echo -e "\n=========== End Test 7 ===========\nResponse should be HTTP error 401 Unauthorized\n\n"
 
 pkJP3="pk3"
-echo -e "=========== Begin Test 8 ===========\nTry to get all the PK of $loginJP\n"
+echo -e "=========== Begin Test 8 ===========\nTry to update the PK of $loginJP\n"
 curl "$baseUrl/public-key/$loginJP/$deviceJP1" -X PUT -d '{"pk": "'"$pkJP3"'"}' -H "Content-Type: application/json" -H "authorization: Bearer $1" -i
 curl "$baseUrl/public-key/$loginJP"  -H "authorization: Bearer $1" -i
 echo -e "\n=========== End Test 8 ===========\nResponse should be HTTP error 200 OK followed by HTTP error 200 OK with PK in response body (as JSON) \n\n"
