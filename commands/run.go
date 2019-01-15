@@ -46,13 +46,19 @@ var runCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(runCmd)
 	runCmd.Flags().StringP("config", "c", "config.toml", "The config file to load")
-	runCmd.Flags().StringP("keyfile", "k", "symmetric_keyfile", "The key file (used for JWT signing) to load")
+	runCmd.Flags().StringP("keyfile", "k", "symmetric_key_file", "The key file (HMAC with SHA256 used for JWT signing) to load")
 }
 
 func run(cmd *cobra.Command) {
 	var err error
-	confFilename := cmd.Flag("config").Value.String()
-	keyfilepath := cmd.Flag("keyfile").Value.String()
+	confFilename, err := cmd.Flags().GetString("config")
+	if err != nil {
+		log.Fatalf("Couldn't extract flag, error is : %s", err)
+	}
+	keyfilepath, err := cmd.Flags().GetString("keyfile")
+	if err != nil {
+		log.Fatalf("Couldn't extract flag, error is : %s", err)
+	}
 	keyData, err := helper.ReadFile(keyfilepath)
 	if err != nil {
 		log.Fatalf("Couldn't load the keyfile.\nError was: %s", err)

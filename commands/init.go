@@ -49,8 +49,14 @@ allowed_origins = ["http://localhost:4200"]
 Please fill this config file with the appropriate information.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		dir := cmd.Flag("dest").Value.String()
-		keyfilename := cmd.Flag("genkeyfile").Value.String()
+		dir, err := cmd.Flags().GetString("dest")
+		if err != nil {
+			log.Fatalf("Couldn't extract flag, error is : %s", err)
+		}
+		keyfilename, err := cmd.Flags().GetString("genkeyfile")
+		if err != nil {
+			log.Fatalf("Couldn't extract flag, error is : %s", err)
+		}
 		written := generateSymmetricKeyFile(dir, keyfilename)
 		if written {
 			fmt.Println("Symmetric key saved.")
@@ -66,8 +72,8 @@ func init() {
 	RootCmd.AddCommand(initCmd)
 	initCmd.Flags().StringP("dest", "d", "./",
 		"The path where to save the generated config file. (If the path denotes a directory then the config file path will be path/config.toml)")
-	initCmd.Flags().StringP("genkeyfile", "k", "symmetric_keyfile",
-		"If this flag is specified, it will generate the symmetric key file (used for JWT signing) at the given location. The default location is ./symmetric_keyfile")
+	initCmd.Flags().StringP("genkeyfile", "k", "symmetric_key_file",
+		"If this flag is specified, it will generate the symmetric key file (HMAC with SHA256 used for JWT signing) at the given location. The default location is ./symmetric_key_file")
 }
 
 // GenSymmetricKeyFile generates a key file with 256 bits symmetric key for HMAC.
