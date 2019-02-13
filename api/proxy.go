@@ -19,6 +19,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -49,6 +50,7 @@ func (p *BotStorageReverseProxy) Handle(w http.ResponseWriter, r *http.Request) 
 		return fmt.Errorf("Couldn't extract or validate the JWT.\nError was: %s", err)
 	}
 	URI := strings.TrimPrefix(r.RequestURI, p.LocationPrefix)
+	log.Printf("Botstorage Proxy : URI -> %s", URI)
 	p.updateRequestURL(URI)
 	p.proxy.ServeHTTP(w, r)
 	return nil

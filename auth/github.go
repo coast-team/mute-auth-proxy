@@ -42,8 +42,7 @@ func MakeGithubLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 	}
 }
 
-func setGithubClaims(token *jwt.Token, profile map[string]interface{}) {
-	claims := token.Claims.(jwt.MapClaims)
+func setGithubClaims(claims jwt.MapClaims, profile map[string]interface{}) {
 	claims["provider"] = "github"
 	claims["login"] = profile["login"]
 	claims["name"] = profile["name"]

@@ -42,8 +42,7 @@ func MakeGoogleLoginHandler(conf *config.Config) func(w http.ResponseWriter, r *
 	}
 }
 
-func setGoogleClaims(token *jwt.Token, profile map[string]interface{}) {
-	claims := token.Claims.(jwt.MapClaims)
+func setGoogleClaims(claims jwt.MapClaims, profile map[string]interface{}) {
 	claims["provider"] = "google"
 	claims["login"] = profile["email"]
 	claims["name"] = profile["name"]

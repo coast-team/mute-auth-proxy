@@ -61,3 +61,11 @@ func IsJWTValid(token *jwt.Token, tokenError error) error {
 	}
 	return fmt.Errorf("%s: %s", msg, tokenError)
 }
+
+func GenerateJWT() *jwt.Token {
+	return jwt.New(jwt.SigningMethodHS256)
+}
+
+func GetSignedString(token *jwt.Token) (string, error) {
+	return token.SignedString(GetSecret())
+}

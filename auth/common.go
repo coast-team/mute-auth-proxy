@@ -85,9 +85,9 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 		return fmt.Errorf("Couldn't decode %s's response.\nError was: %s", provider, err)
 	}
 
-	token := jwt.New(jwt.SigningMethodHS256)
-	setClaims(token, profile, provider)
-	tokenString, err := token.SignedString(helper.GetSecret())
+	token := helper.GenerateJWT()
+	SetClaims(token, profile, provider)
+	signedString, err := helper.GetSignedString(token)
 	if err != nil {
 		w.Write([]byte("Server internal error."))
 		return fmt.Errorf("Failed to generate a JWT token.\nError was: %s", err)
@@ -95,16 +95,22 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	jwt := Token{AccessToken: tokenString}
+	jwt := Token{AccessToken: signedString}
 	json.NewEncoder(w).Encode(jwt)
 	return nil
 }
 
-func setClaims(token *jwt.Token, profile map[string]interface{}, provider string) {
+func SetClaims(token *jwt.Token, profile map[string]interface{}, provider string) {
+	claims := token.Claims.(jwt.MapClaims)
 	switch provider {
 	case "github":
-		setGithubClaims(token, profile)
+		setGithubClaims(claims, profile)
 	case "google":
-		setGoogleClaims(token, profile)
+		setGoogleClaims(claims, profile)
+	case "bot":
+		claims["provider"] = provider
+		claims["login"] = profile["login"]
+		claims["iat"] = time.Now().Unix()
+		claims["exp"] = 0
 	}
 }
