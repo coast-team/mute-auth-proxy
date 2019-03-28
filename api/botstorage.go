@@ -22,7 +22,7 @@ import (
 	"net/http"
 )
 
-// MakeBotStorageProxyHandler is the handler for the route that proxies a Coniks request
+// MakeBotStorageProxyHandler is the handler for the route that proxies a request to the botstorage
 func MakeBotStorageProxyHandler(p *BotStorageReverseProxy) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := p.Handle(w, r)

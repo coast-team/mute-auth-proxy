@@ -26,6 +26,18 @@ Fill in the `config.toml` with the required information (OAUTH client ID, client
 mute-auth-proxy run
 ```
 
+## Compile it
+
+```
+go install # binary will be put in $GOPATH/bin
+```
+
+or
+
+```
+go build # in working directory
+```
+
 ## Help ?
 
 ```

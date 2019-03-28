@@ -100,6 +100,7 @@ func handleProviderCallback(w http.ResponseWriter, r *http.Request, provider str
 	return nil
 }
 
+// SetClaims sets the different claims to a JWT depending on the service (Google, Github, botstorage)
 func SetClaims(token *jwt.Token, profile map[string]interface{}, provider string) {
 	claims := token.Claims.(jwt.MapClaims)
 	switch provider {

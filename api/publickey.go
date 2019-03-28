@@ -47,7 +47,8 @@ func (e *deviceAlreadyExistsError) Error() string {
 	return fmt.Sprintf("Device already present for %s", e.login)
 }
 
-// MakePublicKeyPOSTHandler is the handler for the API to get or save a public key
+// MakePublicKeyPOSTHandler is the handler for the API to save a public key
+// This public key is associated to an username and a deviceID
 func MakePublicKeyPOSTHandler(db *badger.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Body == nil {
@@ -212,7 +213,7 @@ func makeBDAddTxnHandler(db *badger.DB, login, device, pk string) func(txn *badg
 	}
 }
 
-// MakePublicKeyGETHandler is the handler for the API to get or save a public key
+// MakePublicKeyGETHandler is the handler for the API to get a public key from a specific user and deviceID
 func MakePublicKeyGETHandler(db *badger.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -265,7 +266,7 @@ func handleGetPublicKey(db *badger.DB, login, device string) (PublicKey, error) 
 	return pk, err
 }
 
-// MakePublicKeyGETAllHandler is the handler for the API to get or save a public key
+// MakePublicKeyGETAllHandler is the handler for the API to get all the public keys of an user
 func MakePublicKeyGETAllHandler(db *badger.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -337,7 +338,7 @@ func handleGetAllPublicKeys(db *badger.DB, login string) (UserAllPK, error) {
 	return userAllPK, err
 }
 
-// MakePublicKeyPUTHandler is the handler for the API to get or save a public key
+// MakePublicKeyPUTHandler is the handler for the API to update a public key from an username deviceID
 func MakePublicKeyPUTHandler(db *badger.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
